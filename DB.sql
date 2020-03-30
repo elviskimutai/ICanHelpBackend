@@ -17,6 +17,15 @@ DROP DATABASE IF EXISTS `covid-19`;
 CREATE DATABASE IF NOT EXISTS `covid-19` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `covid-19`;
 
+-- Dumping structure for procedure covid-19.ApproveUser
+DROP PROCEDURE IF EXISTS `ApproveUser`;
+DELIMITER //
+CREATE PROCEDURE `ApproveUser`(IN _id int)
+BEGIN
+update users set approved=1 where id=_id;
+END//
+DELIMITER ;
+
 -- Dumping structure for table covid-19.countries
 DROP TABLE IF EXISTS `countries`;
 CREATE TABLE IF NOT EXISTS `countries` (
@@ -30,6 +39,16 @@ CREATE TABLE IF NOT EXISTS `countries` (
 ) ENGINE=InnoDB AUTO_INCREMENT=228 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
+-- Dumping structure for procedure covid-19.DeleteUser
+DROP PROCEDURE IF EXISTS `DeleteUser`;
+DELIMITER //
+CREATE PROCEDURE `DeleteUser`(IN _id int)
+BEGIN
+update users set deleted=1 where id=_id;
+
+END//
+DELIMITER ;
 
 -- Dumping structure for procedure covid-19.GetCountries
 DROP PROCEDURE IF EXISTS `GetCountries`;
@@ -49,12 +68,52 @@ select * from medicalcategories where deleted=0;
 END//
 DELIMITER ;
 
+-- Dumping structure for procedure covid-19.GetOfficersByCategory
+DROP PROCEDURE IF EXISTS `GetOfficersByCategory`;
+DELIMITER //
+CREATE PROCEDURE `GetOfficersByCategory`()
+BEGIN
+select count(*) y,medicalcategories.description as label from medicalofficers
+ inner join medicalcategories on medicalcategories.id=medicalofficers.categoryid group by categoryid;
+END//
+DELIMITER ;
+
+-- Dumping structure for procedure covid-19.GetOfficersByCategoryUnEmployed
+DROP PROCEDURE IF EXISTS `GetOfficersByCategoryUnEmployed`;
+DELIMITER //
+CREATE PROCEDURE `GetOfficersByCategoryUnEmployed`()
+BEGIN
+select count(*) y,medicalcategories.description as label from medicalofficers
+ inner join medicalcategories on medicalcategories.id=medicalofficers.categoryid
+ where medicalofficers.employed='No' group by categoryid;
+END//
+DELIMITER ;
+
 -- Dumping structure for procedure covid-19.GetOneCountry
 DROP PROCEDURE IF EXISTS `GetOneCountry`;
 DELIMITER //
 CREATE PROCEDURE `GetOneCountry`(IN _id int)
 BEGIN
 select * from countries where deleted=0 and id=_id;
+END//
+DELIMITER ;
+
+-- Dumping structure for procedure covid-19.GetTotalOfficers
+DROP PROCEDURE IF EXISTS `GetTotalOfficers`;
+DELIMITER //
+CREATE PROCEDURE `GetTotalOfficers`()
+BEGIN
+select count(*) from medicalofficers into @Total;
+select count(*) as count,employed,@Total as Total from medicalofficers group by employed;
+END//
+DELIMITER ;
+
+-- Dumping structure for procedure covid-19.GetUsers
+DROP PROCEDURE IF EXISTS `GetUsers`;
+DELIMITER //
+CREATE PROCEDURE `GetUsers`()
+BEGIN
+select * from users where deleted=0;
 END//
 DELIMITER ;
 
@@ -92,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `medicalofficers` (
   KEY `fk_categories_idx` (`categoryid`),
   CONSTRAINT `fk_categories` FOREIGN KEY (`categoryid`) REFERENCES `medicalcategories` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_officer_country` FOREIGN KEY (`countryid`) REFERENCES `countries` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
 
@@ -197,7 +256,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   KEY `fk_Country_idx` (`countryid`),
   CONSTRAINT `fk_Country` FOREIGN KEY (`countryid`) REFERENCES `countries` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
 

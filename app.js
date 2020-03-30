@@ -7,6 +7,7 @@ var logger = require("morgan");
 var auth = require("./routes/SystemAdmin/auth");
 var MedicalOfficers = require("./routes/SystemAdmin/MedicalOfficers");
 var Countries = require("./routes/SystemAdmin/Countries");
+var Analystics = require("./routes/SystemAdmin/Analystics");
 var Medicalcategories = require("./routes/SystemAdmin/Medicalcategories");
 var SystemUsers = require("./routes/SystemAdmin/SystemUsers");
 
@@ -27,6 +28,8 @@ app.use("/api/login", auth.router);
 
 app.use("/api/Medicalcategories", Medicalcategories);
 app.use("/api/Countries", Countries);
+app.use("/api/Analystics", Analystics);
+
 app.use("/api/MedicalOfficers", MedicalOfficers);
 app.use("/api/Register", SystemUsers);
 

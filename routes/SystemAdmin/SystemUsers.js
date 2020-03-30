@@ -19,7 +19,7 @@ SystemUsers.get("/",  function(
       });
     } // not connected!
     else {
-      let sp = "call SPGetUsers()";
+      let sp = "call GetUsers()";
       connection.query(sp,  function(
         error,
         results,
@@ -119,5 +119,64 @@ SystemUsers.post("/", function(req, res) {
     });
   }
 });
+SystemUsers.put("/:ID", function(req, res) {
+ 
+        con.getConnection(function(err, connection) {
+          if (err) {
+            res.json({
+              success: false,
+              message: err.message
+            });
+          } // not connected!
+          else {
+            let sp = "call ApproveUser(?)";
+            connection.query(sp, [req.params.ID], function(error, results, fields) {
+              if (error) {
+                res.json({
+                  success: false,
+                  message: error.message
+                });
+              } else {
+                res.json({
+                  success: true,
+                  message: "saved"
+                });
+              }
+              connection.release();
+              // Don't use the connection here, it has been returned to the pool.
+            });
+          }
+        });
+     
+});
+SystemUsers.delete("/:ID", function(req, res) {
+ 
+  con.getConnection(function(err, connection) {
+    if (err) {
+      res.json({
+        success: false,
+        message: err.message
+      });
+    } // not connected!
+    else {
+      let sp = "call DeleteUser(?)";
+      connection.query(sp, [req.params.ID], function(error, results, fields) {
+        if (error) {
+          res.json({
+            success: false,
+            message: error.message
+          });
+        } else {
+          res.json({
+            success: true,
+            message: "saved"
+          });
+        }
+        connection.release();
+        // Don't use the connection here, it has been returned to the pool.
+      });
+    }
+  });
 
+});
 module.exports = SystemUsers;
